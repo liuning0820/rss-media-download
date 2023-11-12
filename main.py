@@ -46,6 +46,7 @@ def download_from_url(url):
         print("当前系统是 Windows")
         os.chdir(r"Z:\TDDOWNLOAD")
     elif system_type == "Linux":
+        print("当前系统是 Linux")
         os.chdir(download_path)
     elif system_type == "Darwin":
         print("当前系统是 macOS")
