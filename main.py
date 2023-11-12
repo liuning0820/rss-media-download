@@ -9,6 +9,24 @@ import youtube_dl
 import os
 import webbrowser
 
+import configparser
+
+import platform
+
+system_type = platform.system()
+
+
+# Create a ConfigParser object
+config = configparser.ConfigParser()
+
+# Read the configuration file
+config.read('config.ini')
+
+# Get values from the configuration file
+download_path = config.get('Settings', 'DownloadPath')
+
+
+
 
 def download_from_rss_feed(feed_url):
     media_urls = extract_urls_from_rss_feed(feed_url)
@@ -24,7 +42,16 @@ def extract_urls_from_rss_feed(feed_url):
 
 
 def download_from_url(url):
-    os.chdir(r"Z:\TDDOWNLOAD")
+    if system_type == "Windows":
+        print("当前系统是 Windows")
+        os.chdir(r"Z:\TDDOWNLOAD")
+    elif system_type == "Linux":
+        os.chdir(download_path)
+    elif system_type == "Darwin":
+        print("当前系统是 macOS")
+    else:
+        print("未知系统")    
+
     # 下载视频和字幕
     os.system("youtube-dl -f mp4 --write-auto-sub --sub-lang zh-Hans --sub-format vtt --convert-subs srt " + url)
     os.system("youtube-dl -f mp4 --write-auto-sub --sub-lang zh-Hant --sub-format vtt --convert-subs srt " + url)
