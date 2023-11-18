@@ -99,5 +99,7 @@ def multi_download_from_rss_feed_file(file):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # download_from_rss_feed("https://www.youtube.com/feeds/videos.xml?channel_id=UCs_tLP3AiwYKwdUHpltJPuA")
+    # multi_download_from_file("url.txt")
     multi_download_from_rss_feed_file("feeds.txt")
+
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
