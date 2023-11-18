@@ -1,10 +1,10 @@
 #!/bin/bash
-pip install -r requirements.txt
 
 # 获取脚本的路径
 script_path=$(dirname "$0")
 
-# 构建 data.txt 的相对路径
+pip install -r "$script_path/requirements.txt"
+
 data_file_path="$script_path/main.py"
 
-python $data_file_path
+python "$data_file_path"
