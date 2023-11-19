@@ -1,11 +1,13 @@
 # This is a sample Python script.
 import feedparser
-
+from datetime import datetime, timedelta, date, timezone
+from dateutil import parser
 import requests
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 import youtube_dl
+import yt_dlp
 import os
 import webbrowser
 
@@ -14,7 +16,6 @@ import configparser
 import platform
 
 system_type = platform.system()
-
 
 # Create a ConfigParser object
 config = configparser.ConfigParser()
@@ -26,41 +27,72 @@ config.read('config.ini')
 download_path = config.get('Settings', 'DownloadPath')
 
 
-
-
 def download_from_rss_feed(feed_url):
     media_urls = extract_urls_from_rss_feed(feed_url)
-    for url in media_urls[1:3]:
+    print("media Count:{0}".format(len(media_urls)))
+    for url in media_urls:
         print(url)
-        download_from_url(url)
+        download_directory = set_download_target_folder()
+        download_video_with_subtitles(url, download_directory)
 
 
 def extract_urls_from_rss_feed(feed_url):
-    """extract entries' urls from a feed url"""
+    """extract entries' urls from a feed url published within 24 hours"""
     feed_entries = feedparser.parse(feed_url).entries
-    return [entry.link for entry in feed_entries]
+    return [entry.link for entry in feed_entries if is_within_24_hours(parser.parse(entry.published))]
 
 
-def download_from_url(url):
+def is_within_24_hours(dt):
+    # Get the current datetime
+    current_datetime = datetime.now()
+
+    dt = dt.replace(tzinfo=None)
+
+    # Calculate the difference between the current time and the provided datetime
+    time_difference = current_datetime - dt
+
+    # Check if the difference is less than 24 hours
+    return time_difference < timedelta(hours=24)
+
+
+def set_download_target_folder():
     if system_type == "Windows":
         print("当前系统是 Windows")
-        os.chdir(r"Z:\TDDOWNLOAD")
+        # os.chdir(r"Z:\TDDOWNLOAD")
+        return r"Z:\TDDOWNLOAD"
     elif system_type == "Linux":
         print("当前系统是 Linux")
-        os.chdir(download_path)
+        # os.chdir(download_path)
+        return download_path
     elif system_type == "Darwin":
         print("当前系统是 macOS")
+        return download_path
     else:
-        print("未知系统")    
+        print("未知系统")
+        return download_path
 
-    # 下载视频和字幕
-    os.system("youtube-dl -f mp4 --write-auto-sub --sub-lang zh-Hans --sub-format vtt --convert-subs srt " + url)
-    os.system("youtube-dl -f mp4 --write-auto-sub --sub-lang zh-Hant --sub-format vtt --convert-subs srt " + url)
-    os.system("youtube-dl -f mp4 --write-auto-sub --sub-lang en --sub-format vtt --convert-subs srt " + url)
 
-    os.system("youtube-dl -f mp4 --write-auto-sub --sub-lang zh-Hans --sub-format vtt " + url)
-    os.system("youtube-dl -f mp4 --write-auto-sub --sub-lang zh-Hant --sub-format vtt " + url)
-    os.system("youtube-dl -f mp4 --write-auto-sub --sub-lang en --sub-format vtt " + url)
+def download_video_with_subtitles(video_url, download_directory):
+    # youtube-dl 下载视频和字幕
+    # os.system("youtube-dl -f mp4 --write-auto-sub --sub-lang zh-Hans --sub-format vtt --convert-subs srt -o " +  download_directory +"/%(title)s.%(ext)s " + video_url)
+    # os.system("youtube-dl -f mp4 --write-auto-sub --sub-lang zh-Hant --sub-format vtt --convert-subs srt -o " +  download_directory +"/%(title)s.%(ext)s " + video_url)
+    # os.system("youtube-dl -f mp4 --write-auto-sub --sub-lang en --sub-format vtt --convert-subs srt -o " +  download_directory +"/%(title)s.%(ext)s " + video_url)
+
+    # yt-dlp 下载视频和字幕
+    # Download the best mp4 video available, or the best video if no mp4 available
+
+    os.system(
+        'yt-dlp -f "b[ext=mp4]" --write-auto-sub --sub-lang "zh.*,en.*" --sub-format vtt --convert-subs srt -o ' + download_directory +"/%(title)s.%(ext)s "  + video_url)
+
+    # yt-dlp module 下载视频和字幕
+    # options = {
+    #     'format': 'mp4',
+    #     'writeautomaticsub': True,  # 下载字幕
+    #     'subtitleslangs': ['en.*','zh.*'],  # 字幕语言代码，可以根据需要更改
+    # }
+    #
+    # with yt_dlp.YoutubeDL(options) as ydl:
+    #     ydl.download([video_url])
 
 
 def multi_download_from_file(file):
@@ -72,10 +104,8 @@ def multi_download_from_file(file):
     for url in all_urls:
         print('开始下载第{}个'.format(count))
 
-        # os.system("youtube-dl --write-auto-sub \
-        # --sub-lang es --write-auto-sub  -f m4a " + url)
-
-        download_from_url(url)
+        download_directory = set_download_target_folder()
+        download_video_with_subtitles(url, download_directory)
 
         print('第{}个下载完成,已完成{:.3f}'.format(count, count / len(all_urls)))
         count += 1
@@ -84,22 +114,23 @@ def multi_download_from_file(file):
 def multi_download_from_rss_feed_file(file):
     # 保存有rss feed链接的文件
     with open(file, 'r', encoding="utf8") as f:
-        all_feed_urls = f.readlines()
-    print(len(all_feed_urls))
+        all_feed_lines = f.readlines()
+    print(len(all_feed_lines))
     count = 1
-    for feed_url in all_feed_urls:
+    for feed_line in all_feed_lines:
         print('开始下载第{}个'.format(count))
-        print(feed_url)
-        download_from_rss_feed(feed_url)
+        print(feed_line.strip())
+        if feed_line.strip():
+            feed_url = feed_line.split("|")[1]
+            print(feed_url)
+            download_from_rss_feed(feed_url)
 
-        print('第{}个下载完成,已完成{:.3f}'.format(count, count / len(all_feed_urls)))
+        print('第{}个下载完成,已完成{:.3f}'.format(count, count / len(all_feed_lines)))
         count += 1
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # download_from_rss_feed("https://www.youtube.com/feeds/videos.xml?channel_id=UCs_tLP3AiwYKwdUHpltJPuA")
-    # multi_download_from_file("url.txt")
+    multi_download_from_file("url.txt")
     multi_download_from_rss_feed_file("feeds.txt")
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/

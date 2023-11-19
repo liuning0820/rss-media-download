@@ -1,7 +1,4 @@
-https://www.youtube.com/feeds/videos.xml?channel_id=UChgCVolsF6L7DWmOpWKSkMA
-https://www.youtube.com/feeds/videos.xml?channel_id=UCO2jhyAIx2NXuxLdl6RoEiA
-https://www.youtube.com/feeds/videos.xml?channel_id=UCs_tLP3AiwYKwdUHpltJPuA
-https://www.youtube.com/feeds/videos.xml?channel_id=UCnIIyNL75v-0F85_6ExC0mw
-
-
+越哥说电影|https://www.youtube.com/feeds/videos.xml?channel_id=UChgCVolsF6L7DWmOpWKSkMA
+GOTO Conferences|https://www.youtube.com/feeds/videos.xml?channel_id=UCs_tLP3AiwYKwdUHpltJPuA
+知心英文|https://www.youtube.com/feeds/videos.xml?channel_id=UCnIIyNL75v-0F85_6ExC0mw
 
