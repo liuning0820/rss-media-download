@@ -5,11 +5,15 @@ pipeline {
         stage('Run Script') {
             steps {
                 script {
-                    sh '''
-                        #!/bin/bash
+                    bat '''
                         echo "Hello from the Jenkins pipeline script!"
-                        # Add your other commands here
-                        sh ./run.sh
+
+                        pip install -r "./requirements.txt"
+
+                        python --version
+
+                        python "./main.py"
+
                     '''
                 }
             }
