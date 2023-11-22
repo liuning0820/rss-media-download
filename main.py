@@ -1,16 +1,14 @@
-# This is a sample Python script.
+import os
+import sys
+import platform
+
 import feedparser
 from datetime import datetime, timedelta, date, timezone
 from dateutil import parser
 import requests
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-import os
-import webbrowser
-
 import configparser
-
-import platform
 
 system_type = platform.system()
 
@@ -129,5 +127,9 @@ def multi_download_from_rss_feed_file(file):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # download_from_rss_feed("https://www.youtube.com/feeds/videos.xml?channel_id=UCs_tLP3AiwYKwdUHpltJPuA")
-    multi_download_from_file("url.txt")
+    urls_list_file_path = "url.txt"
+    if len(sys.argv) > 1:
+        urls_list_file_path = sys.argv[1]
+    print(urls_list_file_path)
+    multi_download_from_file(urls_list_file_path)
     multi_download_from_rss_feed_file("feeds.txt")
