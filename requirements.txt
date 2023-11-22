@@ -1,5 +1,5 @@
 requests>=2.29.0
 feedparser~=6.0.8
-youtube_dl
+# youtube_dl
 yt-dlp
 python-dateutil>=2.8.2

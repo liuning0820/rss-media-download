@@ -5,9 +5,6 @@ from dateutil import parser
 import requests
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-import youtube_dl
-import yt_dlp
 import os
 import webbrowser
 
