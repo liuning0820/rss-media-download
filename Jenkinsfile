@@ -12,7 +12,7 @@ pipeline {
                                 echo "Hello from the Jenkins pipeline script!"
                                 python --version
                                 pip install -r "./requirements.txt"
-                                python "./main.py"
+                                python "./main.py" urls.txt feeds.txt
 
                             '''
                         }
@@ -25,7 +25,7 @@ pipeline {
                             sh '''
                                 python --version
                                 pip install -r "./requirements.txt"
-                                python "./main.py" urls_bilibili.txt
+                                python "./main.py" urls_bilibili.txt feeds_bilibili.txt
 
                             '''
                         }

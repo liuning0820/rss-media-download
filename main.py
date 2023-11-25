@@ -1,6 +1,7 @@
 import os
 import sys
 import platform
+from urllib.parse import urlparse
 
 import feedparser
 from datetime import datetime, timedelta, date, timezone
@@ -34,7 +35,7 @@ def download_from_rss_feed(feed_url):
 def extract_urls_from_rss_feed(feed_url):
     """extract entries' urls from a feed url published within 24 hours"""
     feed_entries = feedparser.parse(feed_url).entries
-    return [entry.link for entry in feed_entries if is_within_24_hours(parser.parse(entry.published))]
+    return [entry.link for entry in feed_entries if is_within_7_days(parser.parse(entry.published))]
 
 
 def is_within_24_hours(dt):
@@ -48,6 +49,19 @@ def is_within_24_hours(dt):
 
     # Check if the difference is less than 24 hours
     return time_difference < timedelta(hours=24)
+
+
+def is_within_7_days(dt):
+    # Get the current datetime
+    current_datetime = datetime.now()
+
+    dt = dt.replace(tzinfo=None)
+
+    # Calculate the difference between the current time and the provided datetime
+    time_difference = current_datetime - dt
+
+    # Check if the difference is less than 7 days
+    return time_difference < timedelta(days=7)
 
 
 def set_download_target_folder():
@@ -67,6 +81,11 @@ def set_download_target_folder():
         return download_path
 
 
+def extract_domain(url):
+    parsed_url = urlparse(url)
+    return parsed_url.netloc
+
+
 def download_video_with_subtitles(video_url, download_directory):
     # youtube-dl 下载视频和字幕
     # os.system("youtube-dl -f mp4 --write-auto-sub --sub-lang zh-Hans --sub-format vtt --convert-subs srt -o " +  download_directory +"/%(title)s.%(ext)s " + video_url)
@@ -75,9 +94,13 @@ def download_video_with_subtitles(video_url, download_directory):
 
     # yt-dlp 下载视频和字幕
     # Download the best mp4 video available, or the best video if no mp4 available
-
-    os.system(
-        'yt-dlp -f "b[ext=mp4]" --write-auto-sub --sub-lang "zh.*,en.*" --sub-format vtt --convert-subs srt -o ' + download_directory +"/%(title)s.%(ext)s "  + video_url)
+    print(extract_domain(video_url))
+    if extract_domain(video_url) == 'www.bilibili.com':
+        os.system(
+            'yt-dlp -f 30032 --write-auto-sub --sub-lang "zh.*,en.*" --sub-format vtt --convert-subs srt -o ' + download_directory + "/%(title)s.%(ext)s " + video_url)
+    else:
+        os.system(
+            'yt-dlp -f "b[ext=mp4]" --write-auto-sub --sub-lang "zh.*,en.*" --sub-format vtt --convert-subs srt -o ' + download_directory + "/%(title)s.%(ext)s " + video_url)
 
     # yt-dlp module 下载视频和字幕
     # options = {
@@ -126,10 +149,13 @@ def multi_download_from_rss_feed_file(file):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # download_from_rss_feed("https://www.youtube.com/feeds/videos.xml?channel_id=UCs_tLP3AiwYKwdUHpltJPuA")
-    urls_list_file_path = "url.txt"
+    default_urls_list_file_path = "urls_bilibili.txt"
+    default_feed_url_list_file_path = "feeds_bilibili.txt"
+    print(len(sys.argv))
     if len(sys.argv) > 1:
         urls_list_file_path = sys.argv[1]
-    print(urls_list_file_path)
-    multi_download_from_file(urls_list_file_path)
-    multi_download_from_rss_feed_file("feeds.txt")
+    if len(sys.argv) > 2:
+        default_feed_url_list_file_path = sys.argv[2]
+    print(default_urls_list_file_path)
+    multi_download_from_file(default_urls_list_file_path)
+    multi_download_from_rss_feed_file(default_feed_url_list_file_path)
