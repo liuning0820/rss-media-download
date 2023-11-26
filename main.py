@@ -5,6 +5,8 @@ from urllib.parse import urlparse
 
 import feedparser
 from datetime import datetime, timedelta, date, timezone
+
+import yt_dlp
 from dateutil import parser
 import requests
 # Press Shift+F10 to execute it or replace it with your code.
@@ -85,6 +87,23 @@ def extract_domain(url):
     parsed_url = urlparse(url)
     return parsed_url.netloc
 
+def get_available_formats(video_url: str) -> list:
+    options = {
+        'format': 'mp4',  # You can specify the desired format here
+        'quiet': True,      # Suppress output
+    }
+
+    with yt_dlp.YoutubeDL(options) as ydl:
+        info = ydl.extract_info(video_url, download=False)
+        formats = info.get('formats', [])
+
+        available_formats = []
+        for fmt in formats:
+            format_code = fmt.get('format_id')
+            available_formats.append(format_code)
+
+        return available_formats
+
 
 def download_video_with_subtitles(video_url, download_directory):
     # youtube-dl 下载视频和字幕
@@ -95,9 +114,18 @@ def download_video_with_subtitles(video_url, download_directory):
     # yt-dlp 下载视频和字幕
     # Download the best mp4 video available, or the best video if no mp4 available
     # print(extract_domain(video_url))
+
     if extract_domain(video_url) == 'www.bilibili.com':
-        os.system(
-            'yt-dlp -f 30032 --write-auto-sub --sub-lang "zh.*,en.*" --sub-format vtt --convert-subs srt -o "' + download_directory + '/%(title)s.%(ext)s" ' + video_url)
+        available_formats = set(get_available_formats(video_url))
+        prefer_formats = set(['30031','30032','30033'])
+
+        intersection_set = available_formats.intersection(prefer_formats)
+
+        result_list = list(intersection_set)
+        if len(result_list) > 0:
+            print(result_list[0])
+            os.system(
+            'yt-dlp -f '+ result_list[0] + ' --write-auto-sub --sub-lang "zh.*,en.*" --sub-format vtt --convert-subs srt -o "' + download_directory + '/%(title)s.%(ext)s" ' + video_url)
     else:
         os.system(
             'yt-dlp -f "b[ext=mp4]" --write-auto-sub --sub-lang "zh.*,en.*" --sub-format vtt --convert-subs srt -o "' + download_directory + '/%(title)s.%(ext)s" ' + video_url)

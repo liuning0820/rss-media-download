@@ -25,6 +25,7 @@ pipeline {
                             sh '''
                                 python --version
                                 pip install -r "./requirements.txt"
+                                export PATH="$PATH:/var/lib/jenkins/.local/bin"
                                 python "./main.py" urls_bilibili.txt feeds_bilibili.txt
 
                             '''
