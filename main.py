@@ -94,13 +94,13 @@ def download_video_with_subtitles(video_url, download_directory):
 
     # yt-dlp 下载视频和字幕
     # Download the best mp4 video available, or the best video if no mp4 available
-    print(extract_domain(video_url))
+    # print(extract_domain(video_url))
     if extract_domain(video_url) == 'www.bilibili.com':
         os.system(
-            'yt-dlp -f 30032 --write-auto-sub --sub-lang "zh.*,en.*" --sub-format vtt --convert-subs srt -o ' + download_directory + "/%(title)s.%(ext)s " + video_url)
+            'yt-dlp -f 30032 --write-auto-sub --sub-lang "zh.*,en.*" --sub-format vtt --convert-subs srt -o "' + download_directory + '/%(title)s.%(ext)s" ' + video_url)
     else:
         os.system(
-            'yt-dlp -f "b[ext=mp4]" --write-auto-sub --sub-lang "zh.*,en.*" --sub-format vtt --convert-subs srt -o ' + download_directory + "/%(title)s.%(ext)s " + video_url)
+            'yt-dlp -f "b[ext=mp4]" --write-auto-sub --sub-lang "zh.*,en.*" --sub-format vtt --convert-subs srt -o "' + download_directory + '/%(title)s.%(ext)s" ' + video_url)
 
     # yt-dlp module 下载视频和字幕
     # options = {
@@ -153,7 +153,7 @@ if __name__ == '__main__':
     default_feed_url_list_file_path = "feeds_bilibili.txt"
     print(len(sys.argv))
     if len(sys.argv) > 1:
-        urls_list_file_path = sys.argv[1]
+        default_urls_list_file_path = sys.argv[1]
     if len(sys.argv) > 2:
         default_feed_url_list_file_path = sys.argv[2]
     print(default_urls_list_file_path)
