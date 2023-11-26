@@ -32,7 +32,7 @@ def download_from_rss_feed(feed_url):
     print("media Count:{0}".format(len(media_urls)))
     for url in media_urls:
         print(url)
-        download_directory = set_download_target_folder()
+        download_directory = download_path
         download_video_with_subtitles(url, download_directory)
 
 
@@ -152,7 +152,7 @@ def multi_download_from_file(file):
     for url in all_urls:
         print('开始下载第{}个'.format(count))
 
-        download_directory = set_download_target_folder()
+        download_directory = download_path
         download_video_with_subtitles(url, download_directory)
 
         print('第{}个下载完成,已完成{:.3f}'.format(count, count / len(all_urls)))
@@ -177,8 +177,34 @@ def multi_download_from_rss_feed_file(file):
         count += 1
 
 
+def clean_directory(directory_path):
+    # Get the current date and time
+    current_time = datetime.now()
+
+    # Calculate the time threshold (7 days ago)
+    threshold_time = current_time - timedelta(days=7)
+
+    # Walk through the directory
+    for root, dirs, files in os.walk(directory_path):
+        for file_name in files:
+            file_path = os.path.join(root, file_name)
+
+            # Get the file creation time
+            creation_time = datetime.fromtimestamp(os.path.getctime(file_path))
+            # print("created time "+ creation_time.strftime('%Y-%m-%d'))
+            # Compare with the threshold time
+            if creation_time < threshold_time:
+                # Uncomment the line below to print the files that will be deleted
+                print(f"Deleting: {file_path}")
+                os.remove(file_path)
+                print(f"Deleted: {file_path}")
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    download_path = set_download_target_folder()
+    # remove files elder than 30 days
+    clean_directory(download_path)
     default_urls_list_file_path = "urls_bilibili.txt"
     default_feed_url_list_file_path = "feeds_bilibili.txt"
     print(len(sys.argv))
@@ -189,3 +215,4 @@ if __name__ == '__main__':
     print(default_urls_list_file_path)
     multi_download_from_file(default_urls_list_file_path)
     multi_download_from_rss_feed_file(default_feed_url_list_file_path)
+

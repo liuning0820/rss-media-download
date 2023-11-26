@@ -24,9 +24,9 @@ pipeline {
                         script {
                             sh '''
                                 python --version
-                                pip install -r "./requirements.txt"
+                                sudo pip install -r "./requirements.txt"
                                 export PATH="$PATH:/var/lib/jenkins/.local/bin"
-                                python "./main.py" urls_bilibili.txt feeds_bilibili.txt
+                                sudo python "./main.py" urls_bilibili.txt feeds_bilibili.txt
 
                             '''
                         }
