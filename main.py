@@ -1,5 +1,6 @@
 import os
 import sys
+print(sys.path)
 import platform
 from urllib.parse import urlparse
 
@@ -24,6 +25,7 @@ config.read('config.ini')
 # Get values from the configuration file
 download_path = config.get('Settings', 'DownloadPath')
 
+print(sys.path)
 
 def download_from_rss_feed(feed_url):
     media_urls = extract_urls_from_rss_feed(feed_url)
