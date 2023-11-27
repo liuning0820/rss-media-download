@@ -100,10 +100,19 @@ def get_available_formats(video_url: str) -> list:
         formats = info.get('formats', [])
 
         available_formats = []
+        audio_only_format = ''
+        video_only_format = ''
         for fmt in formats:
-            format_code = fmt.get('format_id')
-            available_formats.append(format_code)
+            if fmt.get('audio_ext') != 'none' and fmt.get('video_ext') != 'none':
+                format_code = fmt.get('format_id')
+                available_formats.append(format_code)
+            if fmt.get('audio_ext') == 'none' and fmt.get('video_ext') != 'none':
+                audio_only_format = fmt.get('format_id')
+            if fmt.get('audio_ext') != 'none' and fmt.get('video_ext') == 'none':
+                video_only_format = fmt.get('format_id')
 
+        if audio_only_format != '' and video_only_format != '':
+            available_formats.append(audio_only_format+'+' + video_only_format)
         return available_formats
 
 
@@ -119,11 +128,10 @@ def download_video_with_subtitles(video_url, download_directory):
 
     if extract_domain(video_url) == 'www.bilibili.com':
         available_formats = set(get_available_formats(video_url))
-        prefer_formats = set(['30031','30032','30033'])
+        # prefer_formats = set(['30031','30032','30033'])
+        # intersection_set = available_formats.intersection(prefer_formats)
 
-        intersection_set = available_formats.intersection(prefer_formats)
-
-        result_list = list(intersection_set)
+        result_list = list(available_formats)
         if len(result_list) > 0:
             print(result_list[0])
             os.system(
