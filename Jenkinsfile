@@ -1,6 +1,8 @@
 pipeline {
     agent {label 'windows'}
-
+  options {
+      timeout(time: 1, unit: 'HOURS')
+  }
     stages {
         stage('Build') {
             parallel{
