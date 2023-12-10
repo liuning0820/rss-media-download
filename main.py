@@ -203,9 +203,10 @@ def clean_directory(directory_path):
             # Compare with the threshold time
             if creation_time < threshold_time:
                 # Uncomment the line below to print the files that will be deleted
-                print(f"Deleting: {file_path}")
-                os.remove(file_path)
-                print(f"Deleted: {file_path}")
+                encoded_file_path = file_path.encode('utf-8')
+                print(f"Deleting: {encoded_file_path}")
+                os.remove(encoded_file_path)
+                print(f"Deleted: {encoded_file_path}")
 
 
 # Press the green button in the gutter to run the script.
