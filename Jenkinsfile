@@ -1,8 +1,8 @@
 pipeline {
     agent none
-    options {
-        timeout(time: 1, unit: 'HOURS')
-    }
+  options {
+      timeout(time: 1, unit: 'HOURS')
+  }
     stages {
         stage('Build') {
             parallel{
@@ -23,14 +23,15 @@ pipeline {
                     }
                 }
                 stage('Build:Linux') {
-                    agent any
+                    agent {label 'linux'}
                     steps {
                         script {
                             sh '''
                                 python --version
-                                sudo pip install -r "./requirements.txt"
+                                whoami
+                                pip install -r "./requirements.txt"
                                 export PATH="$PATH:/var/lib/jenkins/.local/bin"
-                                sudo python "./main.py" urls_bilibili.txt feeds_bilibili.txt
+                                python "./main.py" urls_bilibili.txt feeds_bilibili.txt
 
                             '''
                         }
