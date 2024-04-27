@@ -1,6 +1,5 @@
 import os
 import sys
-print(sys.path)
 import platform
 from urllib.parse import urlparse
 
@@ -23,7 +22,7 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 # Get values from the configuration file
-download_path = config.get('Settings', 'DownloadPath')
+download_path = '/media/'+os.getlogin + config.get('Settings', 'DownloadPath')
 
 print(sys.path)
 
