@@ -22,7 +22,7 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 # Get values from the configuration file
-download_path = '/media/'+os.getlogin + config.get('Settings', 'DownloadPath')
+download_path = '/media/'+os.getlogin() + config.get('Settings', 'DownloadPath')
 
 print(sys.path)
 
