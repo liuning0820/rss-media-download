@@ -1,13 +1,15 @@
 pipeline {
-    agent {label 'windows'}
-  options {
-      timeout(time: 1, unit: 'HOURS')
-  }
+    agent none
+    options {
+        timeout(time: 1, unit: 'HOURS')
+    }
     stages {
         stage('Build') {
             parallel{
                 stage('Build:Windows') {
-                    agent {label 'windows'}
+                    agent {
+                        label 'windows'
+                    }
                     steps {
                         script {
                             bat '''
