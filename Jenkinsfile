@@ -51,11 +51,11 @@ pipeline {
                     steps {
                         script {
                             sh '''
-                                python --version
+                                python3 --version
                                 whoami
                                 pip install -r "./requirements.txt"
                                 export PATH="$PATH:/var/lib/jenkins/.local/bin"
-                                python "./main.py" urls_bilibili.txt feeds_bilibili.txt
+                                python3 "./main.py" urls_bilibili.txt feeds_bilibili.txt
 
                             '''
                         }
