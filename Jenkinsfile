@@ -26,7 +26,6 @@ pipeline {
                     agent {
                         // docker { image 'node:16-alpine' }
                         dockerfile true
-                        label 'linux'
                     }
                     steps {
                         sh 'node --version'
