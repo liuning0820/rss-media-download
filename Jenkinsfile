@@ -25,7 +25,12 @@ pipeline {
                 stage('Build with Container Agent') {
                     agent {
                         // docker { image 'node:16-alpine' }
-                        dockerfile true
+                        // dockerfile true
+                        dockerfile {
+                            filename 'Dockerfile'
+                            label 'linux'
+                        }
+                        
                     }
                     steps {
                         sh 'node --version'
