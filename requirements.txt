@@ -1,3 +1,4 @@
+-i https://pypi.tuna.tsinghua.edu.cn/simple
 requests>=2.29.0
 feedparser~=6.0.8
 # youtube_dl
