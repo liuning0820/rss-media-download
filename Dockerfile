@@ -1,3 +1,3 @@
-FROM node:16-alpine
+FROM python:alpine3.19
 
 RUN apk add -U curl
