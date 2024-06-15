@@ -35,14 +35,7 @@ pipeline {
                     steps {
                         sh 'python --version'
                         sh 'curl --version'
-                        script{
-                            sh '''
-                                pip install -r "./requirements.txt"
-                                python "./main.py" urls_bilibili.txt feeds_bilibili.txt
-
-                            '''
-                        }
-
+       
                     }
                 }
 
