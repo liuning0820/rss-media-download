@@ -22,6 +22,17 @@ pipeline {
                         }
                     }
                 }
+                stage('Build with Container Agent') {
+                    agent {
+                        // docker { image 'node:16-alpine' }
+                        dockerfile true
+                    }
+                    steps {
+                        sh 'node --version'
+                        sh 'curl --version'
+                    }
+                }
+
                 stage('Build:Linux') {
                     agent {label 'linux'}
                     steps {
@@ -36,7 +47,7 @@ pipeline {
                             '''
                         }
                     }
-                }
+                }                
             }
         }
 
